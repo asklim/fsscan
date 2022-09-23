@@ -1,0 +1,25 @@
+{
+  "name": "fsscan",
+  "version": "1.0.0",
+  "description": "File System Scanner with processing files by middleware",
+  "main": "index.mjs",
+  "scripts": {
+    "scan": "DEBUG=temp,log:*,-debug:* node --trace-warnings ./server/scanmedia.mjs",
+    "media": "DEBUG=temp node --trace-warnings ./server/mediainfo.mjs '/mnt/e/AKlim/Videos'",
+    "mp4": "node ./server/mp4info.mjs '/mnt/e/AKlim/Videos/'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "debug": "^4.3.4",
+    "mediainfo.js": "^0.1.8",
+    "mp4box": "^0.5.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.23.1",
+    "eslint-plugin-react": "^7.31.8",
+    "jest": "^29.0.3"
+  }
+}

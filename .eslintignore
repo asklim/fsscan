@@ -1,0 +1,7 @@
+!.eslintrc.js
+!.eslintrc.mjs
+static/*
+# /node_modules/* -- always ignored
+build/*
+dist/*
+public/*
