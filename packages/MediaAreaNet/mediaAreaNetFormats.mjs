@@ -97,8 +97,8 @@ const knownContainers = [
 ];
 
 
-(function initialize([ headRow, ...initInfo ]) {
-    //const headRow = initInfo[0];
+(function createContainers([ headRow, ...initInfo ]) {
+    //const headRow is initInfo[0];
 
     containers = initInfo.map(
         (val) => infoToObject( val, headRow )

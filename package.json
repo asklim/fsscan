@@ -5,6 +5,7 @@
   "main": "index.mjs",
   "scripts": {
     "scan": "DEBUG=temp,log:*,-debug:* node --trace-warnings ./server/scanmedia.mjs",
+    "video": "DEBUG=temp,log:*,-debug:* node ./server/scanmedia.mjs '/mnt/e/AKlim/Videos'",
     "media": "DEBUG=temp node --trace-warnings ./server/mediainfo.mjs '/mnt/e/AKlim/Videos'",
     "mp4": "node ./server/mp4info.mjs '/mnt/e/AKlim/Videos/'",
     "test": "echo \"Error: no test specified\" && exit 1"

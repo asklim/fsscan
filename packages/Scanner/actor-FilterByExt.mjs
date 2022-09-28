@@ -4,7 +4,7 @@ import { AbstractActor } from './actor-Abstract.mjs';
 
 export class FilterByExt extends AbstractActor {
 
-    #exts;
+    #exts = [];
     #filterByExt = [];
 
     constructor (filesExts) {
@@ -12,7 +12,14 @@ export class FilterByExt extends AbstractActor {
         if ( !Array.isArray( filesExts )) {
             throw new Error('FilterByExt: argument is not a Array.');
         }
-        this.#exts = filesExts;
+        for (let ext of filesExts) {
+            if ( ext && typeof ext == 'string' ) {
+                this.#exts.push( ext[0] !== '.' ?
+                    `.${ext}`
+                    : ext
+                );
+            }
+        }
     }
 
     keyName = () => 'filterByExt';

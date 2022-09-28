@@ -3,7 +3,7 @@ import createDebug from 'debug';
 //const dlog = createDebug('log:scanMedia');
 const debug = createDebug('debug:scanMedia');
 
-//import * as manet from '../utils/mediaAreaNetFormats.mjs';
+import * as manet from '../packages/MediaAreaNet/index.mjs';
 //const audios = manet.audiosFormats();
 //const videos =  manet.videosFormats();
 
@@ -28,12 +28,16 @@ const SIGINT_EXIT_CODE = 2 + 128;
 const START_FOLDER_NAME = path.resolve( process.argv[2] ?? './' );
 
 const scanner = new Scanner( START_FOLDER_NAME );
+const videosFormats = manet.videosFormats();
+scanner.useActor( new FilterByExt( videosFormats ));
+
+/*
 const specialsJS = [
     '.coffee',
     '.closure-compiler'
 ];
 scanner.useActor( new FilterByExt( specialsJS ));
-
+*/
 process.on('unhandledRejection', (reason, promise) => {
     console.log('Unhandled Rejection at:', promise, 'reason:', reason);
     // Application specific logging, throwing an error, or other logic here
