@@ -1,7 +1,8 @@
 
 import * as path from 'node:path';
+import { AbstractActor } from './actor-Abstract.mjs';
 
-export class CountingByExt {
+export class CountingByExt extends AbstractActor {
 
     #sortByExt = 0;
     #sortByCount = 0;
@@ -11,6 +12,7 @@ export class CountingByExt {
         sortBy=undefined,
         direction=undefined,
     }={}) {
+        super();
         //TODO: Сделать выбор сортировки
         this.#sortByExt = sortBy;
         this.#sortByCount = direction;
