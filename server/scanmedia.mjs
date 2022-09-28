@@ -20,13 +20,19 @@ const SCANMEDIA_OUTPUT = `${OUTPUT_DIR_NAME}scanMedia/`;
 checkAndCreateOutputDir( SCANMEDIA_OUTPUT );
 
 import { Scanner } from "../packages/Scanner/Scanner.mjs";
+import { FilterByExt } from '../packages/Scanner/actor-FilterByExt.mjs';
+
 
 const OK_EXIT_CODE = 0;
 const SIGINT_EXIT_CODE = 2 + 128;
 const START_FOLDER_NAME = path.resolve( process.argv[2] ?? './' );
 
 const scanner = new Scanner( START_FOLDER_NAME );
-
+const specialsJS = [
+    '.coffee',
+    '.closure-compiler'
+];
+scanner.useActor( new FilterByExt( specialsJS ));
 
 process.on('unhandledRejection', (reason, promise) => {
     console.log('Unhandled Rejection at:', promise, 'reason:', reason);

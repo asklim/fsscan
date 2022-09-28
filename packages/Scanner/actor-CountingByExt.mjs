@@ -22,6 +22,9 @@ export class CountingByExt extends AbstractActor {
     keyName = () => 'filesByExt';
 
     middleware (fullname) {
+        if ( fullname == undefined ) {
+            return;
+        }
         let { ext } = path.parse( fullname );
         this.filesByExt[ ext ] ??= 0;
         this.filesByExt[ ext ] += 1;
