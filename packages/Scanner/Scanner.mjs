@@ -83,13 +83,17 @@ export class Scanner {
     #updateActorsTotals () {
         for ( const actor of this.#actors ) {
             const key = actor.keyName();
-            const section = this.#output?.[ key ];
-            let fieldsCount = null;
-            section && (fieldsCount = Object.keys( section ).length);
-            this.summary.total[ key ] = fieldsCount;
+            this.summary.total[ key ] = sectionLength( key );
             const actorTotal = actor?.total();
             (actorTotal !== undefined) &&
                 (this.summary.total[ `${key}.total` ] = actorTotal);
+        }
+
+        function sectionLength( key ) {
+            const section = this.#output?.[ key ];
+            let fieldsCount = null;
+            section && (fieldsCount = Object.keys( section ).length);
+            return fieldsCount;
         }
     }
 

@@ -1,9 +1,8 @@
 import createDebug from 'debug';
-const dbgM = createDebug('main');
-const dbgT = createDebug('test');
+const dbgMain = createDebug('main');
+const dbgTest = createDebug('test');
 
-import { open } from 'node:fs/promises';
-//import { Buffer } from 'node:buffer';
+import * as pfs from 'node:fs/promises';
 
 //import MediaInfo from 'mediainfo.js';
 //console.log('MediaInfo is', typeof MediaInfo ); // function
@@ -61,14 +60,14 @@ export default async function fetchMediaInfo (fullname, medianetLib) {
     // let urListener;
     try {
         urls[1] = process.listenerCount( UR_EVENT_NAME );
-        filehandle = await open( fullname, 'r');
+        filehandle = await pfs.open( fullname, 'r');
         const stats = await filehandle.stat();
-        dbgM('"'+ fullname +'"', stats );
+        dbgMain(`"${fullname}"`, stats );
         urls[2] = process.listenerCount( UR_EVENT_NAME );
 
         // urListener = process.rawListeners( UR_EVENT_NAME )?.at(-1);
 
-        //dbgT( medianetLib );
+        //dbgTest( medianetLib );
         const info = await medianetLib.analyzeData(
             () => stats.size,
             readChunk
@@ -80,7 +79,7 @@ export default async function fetchMediaInfo (fullname, medianetLib) {
         });
     }
     catch (err){
-        console.log('catch fetchMediaInfo: "'+ fullname +'"');
+        console.log(`catch fetchMediaInfo: "${fullname}"`);
         //err.mediaFilename = fullname;
         console.log( err );
         return err;
@@ -88,8 +87,8 @@ export default async function fetchMediaInfo (fullname, medianetLib) {
     finally {
         await filehandle?.close();
         //process.removeListener( UR_EVENT_NAME, urListener );
-        dbgM('closed:', fullname );
-        dbgT(`MediaInfo.UR.listener's counts: ${urls}`);
+        dbgMain(`closed: ${fullname}`);
+        dbgTest(`MediaInfo.UR.listener's counts: ${urls}`);
     }
 
     async function readChunk( size, offset ) {
