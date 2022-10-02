@@ -1,15 +1,17 @@
 /** https://en.wikipedia.org/wiki/MD5#Algorithm **/
 /** https://stackoverflow.com/questions/14733374/how-to-generate-an-md5-file-hash-in-javascript-node-js **/
 
+/** TODO: WRONG hash for Russian symbols */
+
 var MD5 = function(d){
-    var r = M(V(Y(X(d),8*d.length)));
+    var r = M( V( Y( X(d), 8*d.length )));
     return r.toLowerCase();
 };
 
 function M(d){
     const m = "0123456789ABCDEF";
     for(
-        var _, f="", r=0;
+        var _, f = '', r = 0;
         r<d.length;
         r++
     ) {
@@ -20,8 +22,22 @@ function M(d){
 }
 
 function X(d) {
-    for(var _=Array(d.length>>2),m=0;m<_.length;m++)_[m]=0;
-    for(m=0;m<8*d.length;m+=8)_[m>>5]|=(255&d.charCodeAt(m/8))<<m%32;
+    for(
+        var _ = Array(d.length>>2), m = 0;
+        m < _.length;
+        m++
+    ) {
+        _[m]=0;
+    }
+
+    for(
+        m = 0;
+        m < 8*d.length;
+        m += 8
+    ) {
+        _[m>>5] |= (255 & d.charCodeAt( m/8 ))<<m%32;
+    }
+
     return _;
 }
 
@@ -29,15 +45,19 @@ function V(d){
     for(var _="",m=0;m<32*d.length;m+=8)_+=String.fromCharCode(d[m>>5]>>>m%32&255);
     return _;
 }
+
 function Y(d,_) {
-    d[_>>5]|=128<<_%32,d[14+(_+64>>>9<<4)]=_;
-    for( var m=1732584193,f=-271733879,r=-1732584194,i=271733878,n=0;
-        n<d.length;
-        n+=16 )
+    d[_>>5] |= 128<<_%32;
+    d[14+(_+64>>>9<<4)] = _;
+
+    for(
+        var m=1732584193,f=-271733879,r=-1732584194,i=271733878,n=0;
+        n < d.length;
+        n += 16 )
     {
         var h=m,t=f,g=r,e=i;
-        f=md5_ii(f=md5_ii(f=md5_ii(f=md5_ii(f=md5_hh(f=md5_hh(f=md5_hh(f=md5_hh(f=md5_gg(f=md5_gg(f=md5_gg(f=md5_gg(f=md5_ff(f=md5_ff(f=md5_ff(f=md5_ff(f,r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+0],7,-680876936),f,r,d[n+1],12,-389564586),m,f,d[n+2],17,606105819),i,m,d[n+3],22,-1044525330)
-            ,r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+4],7,-176418897),f,r,d[n+5],12,1200080426),m,f,d[n+6],17,-1473231341),i,m,d[n+7],22,-45705983)
+        f=md5_ii(f=md5_ii(f=md5_ii(f=md5_ii(f=md5_hh(f=md5_hh(f=md5_hh(f=md5_hh(f=md5_gg(f=md5_gg(f=md5_gg(f=md5_gg(f=md5_ff(f=md5_ff(f=md5_ff(f=md5_ff(f,r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+0],7,-680876936),f,r,d[n+1],12,-389564586),m,f,d[n+2],17,606105819),i,m,d[n+3],22,-1044525330),
+            r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+4],7,-176418897),f,r,d[n+5],12,1200080426),m,f,d[n+6],17,-1473231341),i,m,d[n+7],22,-45705983)
         ,r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+8],7,1770035416),f,r,d[n+9],12,-1958414417),m,f,d[n+10],17,-42063),i,m,d[n+11],22,-1990404162)
         ,r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+12],7,1804603682),f,r,d[n+13],12,-40341101),m,f,d[n+14],17,-1502002290),i,m,d[n+15],22,1236535329)
         ,r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+1],5,-165796510),f,r,d[n+6],9,-1069501632),m,f,d[n+11],14,643717713),i,m,d[n+0],20,-373897302)
