@@ -8,8 +8,9 @@
     "video": "DEBUG=temp,log:*,-debug:* node ./server/scanmedia.mjs '/mnt/e/AKlim/Videos'",
     "media": "DEBUG=temp node --trace-warnings ./server/mediainfo.mjs '/mnt/e/AKlim/Videos'",
     "mp4": "node ./server/mp4info.mjs '/mnt/e/AKlim/Videos/'",
-    "jest:utils": "jest utils",
-    "test": "npm run jest:utils"
+    "jest:utils": "jest -o utils/**/async*",
+    "test:quick": "npm run jest:utils",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",

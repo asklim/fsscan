@@ -1,6 +1,6 @@
 import createDebug from 'debug';
-const dbgM = createDebug('main');
-const dbgT = createDebug('test');
+const dbgMain = createDebug('main');
+const dbgTest = createDebug('test');
 
 const UR_EVENT_NAME = 'unhandledRejection';
 import process from 'node:process';
@@ -31,7 +31,7 @@ if( !existsSync( OUTPUT_DIR_NAME )){
 }
 
 let mediainfo = await MediaInfo();
-dbgM('medianfo is', typeof mediainfo );   // object
+dbgMain('medianfo is', typeof mediainfo );   // object
 console.log( mediainfo );
 mediainfo?.close();
 
@@ -39,10 +39,10 @@ mediainfo?.close();
 (async function () {
     let medianetLib;
     try {
-        dbgM( process.argv );
+        dbgMain( process.argv );
         const FOLDER_NAME = process.argv[2];
 
-        dbgT(`UR.listeners at start: ${process.listenerCount( UR_EVENT_NAME )}`);
+        dbgTest(`UR.listeners at start: ${process.listenerCount( UR_EVENT_NAME )}`);
 
         const PIE_COUNT = 5;
         const fileList = fileListSync( FOLDER_NAME );
@@ -60,7 +60,7 @@ mediainfo?.close();
             let piece of getTasksByPieces()
         ) {
             let pieceInfo = await Promise.allSettled( piece );
-            dbgT(`pieInfo.length: ${pieceInfo.length}`);
+            dbgTest(`pieInfo.length: ${pieceInfo.length}`);
             info = [...info, ...pieceInfo];
         }
 
@@ -76,8 +76,8 @@ mediainfo?.close();
     }
     finally {
         medianetLib?.close();
-        dbgT(`UR.listeners: ${process.listenerCount( UR_EVENT_NAME )}`);
-        dbgT( process.rawListeners( UR_EVENT_NAME ));
+        dbgTest(`UR.listeners: ${process.listenerCount( UR_EVENT_NAME )}`);
+        dbgTest( process.rawListeners( UR_EVENT_NAME ));
         console.log( global.performance );
         console.log('end script.');
     }
@@ -99,7 +99,7 @@ function fileListSync (dirName) {
         ).
         map( (x) => `${dirName}${x}`)
     ;
-    dbgM( fileList );
+    dbgMain( fileList );
     return fileList;
 }
 
@@ -128,7 +128,7 @@ function generatorListInParts ({
             do {
                 let pie = list.slice( begIdx, endIdx );
                 let tasks = pie.map( fn );
-                dbgT(`iteration ${iter}, tasks: ${tasks.length}`);
+                dbgTest(`iteration ${iter}, tasks: ${tasks.length}`);
 
                 // eslint-disable-next-line no-await-in-loop
                 await pause( 1500 );

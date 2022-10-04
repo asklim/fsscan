@@ -1,12 +1,12 @@
 import createDebug from 'debug';
-const dtmp = createDebug('temp');
+const dbgTemp = createDebug('temp');
 const dlog = createDebug('log:scanner');
 const debug = createDebug('debug:scanner');
 
 //import { AsyncQueue } from '../packages/AsyncQueue/AsyncQueue.mjs';
 import { FSCrawler } from '../FSCrawler/FSCrawler.mjs';
 import { CountingByExt } from './actor-CountingByExt.mjs';
-
+import asyncConsistently from '../../utils/async-consistently.mjs';
 export class Scanner {
 
     #logger;
@@ -81,19 +81,20 @@ export class Scanner {
     }
 
     #updateActorsTotals () {
+
+        const sectionLength = ( key ) => {
+            const section = this.#output?.[ key ];
+            let fieldsCount = null;
+            section && (fieldsCount = Object.keys( section ).length);
+            return fieldsCount;
+        };
+
         for ( const actor of this.#actors ) {
             const key = actor.keyName();
             this.summary.total[ key ] = sectionLength( key );
             const actorTotal = actor?.total();
             (actorTotal !== undefined) &&
                 (this.summary.total[ `${key}.total` ] = actorTotal);
-        }
-
-        function sectionLength( key ) {
-            const section = this.#output?.[ key ];
-            let fieldsCount = null;
-            section && (fieldsCount = Object.keys( section ).length);
-            return fieldsCount;
         }
     }
 
@@ -106,7 +107,7 @@ export class Scanner {
 
         this.#updateSummary( reason );
 
-        dtmp('output keys:', Object.keys( this.#output ));
+        dbgTemp('output keys:', Object.keys( this.#output ));
         dlog( this.summary );
 
         return this.#output;
@@ -123,6 +124,7 @@ export class Scanner {
 
     #initCrawler () {
         this.fsCrawler = new FSCrawler( this.#startFolder );
+        // this.fsCrawler.setMaxListeners( Infinity );
 
         this.fsCrawler.addListener( FSCrawler.ERROR_EVENT, (info) => {
             let { fullname, error } = info;
@@ -138,10 +140,19 @@ export class Scanner {
 
         this.fsCrawler.addListener( FSCrawler.FILE_EVENT, (info) => {
             this.summary.total.files += 1;
-            let value = info.fullname;
-            for ( const actor of this.#actors ) {
-                value = actor.middleware( value );
-            }
+            // let value = info.fullname;
+            // for ( const actor of this.#actors ) {
+            //     actor.middleware( value ).
+            //         then( (v) => {
+            //             value = v;
+            //         },
+            //         (err) => {
+            //             console.log(`middleware error`, err );
+            //         });
+            // }
+
+            const asyncFns = this.#actors.map( (actor) => actor.middleware );
+            asyncConsistently( asyncFns, info.fullname );
         });
 
         this.fsCrawler.addListener( FSCrawler.UNKNOWN_EVENT, (info) => {
@@ -149,4 +160,3 @@ export class Scanner {
         });
     }
 }
-

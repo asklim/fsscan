@@ -21,7 +21,8 @@ export class CountingByExt extends AbstractActor {
 
     keyName = () => 'filesByExt';
 
-    middleware (fullname) {
+    middleware = async (fullname) => {
+        fullname = await fullname;
         if ( fullname == undefined ) {
             return;
         }
@@ -30,7 +31,7 @@ export class CountingByExt extends AbstractActor {
         this.filesByExt[ ext ] += 1;
         this.#total += 1;
         return fullname;
-    }
+    };
 
     total = () => this.#total;
 

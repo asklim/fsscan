@@ -7,13 +7,13 @@ export class AbstractActor {
 
     keyName = () => 'abstract Actor';
 
-    middleware (fullname) {
+    middleware = async (fullname) => {
         if ( fullname == undefined ) {
             return;
         }
         /** Processing with fullname */
         return fullname;
-    }
+    };
 
     total () { return this.#total; }
 

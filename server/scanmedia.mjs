@@ -3,10 +3,6 @@ import createDebug from 'debug';
 //const dlog = createDebug('log:scanMedia');
 const debug = createDebug('debug:scanMedia');
 
-import * as manet from '../packages/MediaAreaNet/index.mjs';
-//const audios = manet.audiosFormats();
-//const videos =  manet.videosFormats();
-
 import process from 'node:process';
 import * as path from 'node:path';
 import {
@@ -19,6 +15,10 @@ import {
 const SCANMEDIA_OUTPUT = `${OUTPUT_DIR_NAME}scanMedia/`;
 checkAndCreateOutputDir( SCANMEDIA_OUTPUT );
 
+import * as manet from '../packages/MediaAreaNet/index.mjs';
+//const audios = manet.audiosFormats();
+//const videos =  manet.videosFormats();
+
 import { Scanner } from "../packages/Scanner/Scanner.mjs";
 import { FilterByExt } from '../packages/Scanner/actor-FilterByExt.mjs';
 
@@ -30,6 +30,9 @@ const START_FOLDER_NAME = path.resolve( process.argv[2] ?? './' );
 const scanner = new Scanner( START_FOLDER_NAME );
 const videosFormats = manet.videosFormats();
 scanner.useActor( new FilterByExt( videosFormats ));
+
+import { MediaInfoTracks } from '../packages/Scanner/actor-MediaInfoTracks.mjs';
+scanner.useActor( new MediaInfoTracks());
 
 /*
 const specialsJS = [
@@ -44,6 +47,8 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 let exitCode = OK_EXIT_CODE;
+
+process.setMaxListeners( Infinity );
 
 process.on( // For app termination
     'SIGINT',
@@ -71,6 +76,7 @@ await (async function scanMedia (){
         });
     }
     catch (err) {
+        console.log(`Error in main script: 'scanMedia'.`, err );
         exitCode = err.errno;
     }
 })();

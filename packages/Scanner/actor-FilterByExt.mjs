@@ -12,34 +12,44 @@ export class FilterByExt extends AbstractActor {
         if ( !Array.isArray( filesExts )) {
             throw new Error('FilterByExt: argument is not a Array.');
         }
-        for (let ext of filesExts) {
+        this.#exts = this.#createExtListWithDots( filesExts );
+    }
+
+    keyName = () => 'filterByExt';
+
+    middleware = async (fullname) => {
+        fullname = await fullname;
+        if ( fullname == undefined ) {
+            return;
+        }
+
+        let { ext } = path.parse( fullname );
+        if ( !this.#exts.includes( ext )) {
+            return;
+        }
+
+        this.#filterByExt.push( fullname );
+        this.incrementTotal();
+        return fullname;
+    };
+
+    results () {
+        return [ ...this.#filterByExt ];
+    }
+
+    #createExtListWithDots (exts) {
+        let outExts = [];
+        for (
+            let ext of exts
+        ) {
             if ( ext && typeof ext == 'string' ) {
-                this.#exts.push( ext[0] !== '.' ?
+                outExts.push( ext[0] !== '.' ?
                     `.${ext}`
                     : ext
                 );
             }
         }
-    }
-
-    keyName = () => 'filterByExt';
-
-    middleware (fullname) {
-        if ( fullname == undefined ) {
-            return;
-        }
-        let result;
-        let { ext } = path.parse( fullname );
-        if ( this.#exts.includes( ext )) {
-            result = fullname;
-            this.#filterByExt.push( fullname );
-            this.incrementTotal();
-        }
-        return result;
-    }
-
-    results () {
-        return [ ...this.#filterByExt ];
+        return outExts;
     }
 }
 
