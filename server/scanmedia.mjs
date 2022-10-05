@@ -15,24 +15,26 @@ import {
 const SCANMEDIA_OUTPUT = `${OUTPUT_DIR_NAME}scanMedia/`;
 checkAndCreateOutputDir( SCANMEDIA_OUTPUT );
 
-import * as manet from '../packages/MediaAreaNet/index.mjs';
-//const audios = manet.audiosFormats();
-//const videos =  manet.videosFormats();
-
-import { Scanner } from "../packages/Scanner/Scanner.mjs";
-import { FilterByExt } from '../packages/Scanner/actor-FilterByExt.mjs';
-
 
 const OK_EXIT_CODE = 0;
 const SIGINT_EXIT_CODE = 2 + 128;
 const START_FOLDER_NAME = path.resolve( process.argv[2] ?? './' );
 
+import { Scanner } from "../packages/Scanner/Scanner.mjs";
 const scanner = new Scanner( START_FOLDER_NAME );
+
+import * as manet from '../packages/MediaAreaNet/index.mjs';
+//const audios = manet.audiosFormats();
 const videosFormats = manet.videosFormats();
+
+import { FilterByExt } from '../packages/Scanner/actor-FilterByExt.mjs';
 scanner.useActor( new FilterByExt( videosFormats ));
 
 import { MediaInfoTracks } from '../packages/Scanner/actor-MediaInfoTracks.mjs';
 scanner.useActor( new MediaInfoTracks());
+
+import { FinalCounter } from '../packages/Scanner/actor-FinalCounter.mjs';
+scanner.useActor( new FinalCounter());
 
 /*
 const specialsJS = [

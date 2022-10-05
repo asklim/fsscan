@@ -3,21 +3,24 @@ const dbgTemp = createDebug('temp');
 const dlog = createDebug('log:scanner');
 const debug = createDebug('debug:scanner');
 
-//import { AsyncQueue } from '../packages/AsyncQueue/AsyncQueue.mjs';
+import { AsyncQueue } from '../AsyncQueue/AsyncQueue.mjs';
 import { FSCrawler } from '../FSCrawler/FSCrawler.mjs';
 import { CountingByExt } from './actor-CountingByExt.mjs';
 import asyncConsistently from '../../utils/async-consistently.mjs';
 export class Scanner {
 
+    #actors = [];
     #logger;
     #startFolder;
-    #actors = [];
     #output;
+    #filesQueue;
 
     constructor (startFolder, logger=console) {
 
         this.#logger = logger;
         this.#startFolder = startFolder;
+        this.#filesQueue = new AsyncQueue();
+
         this.timeStart = new Date;
         this.summary = {
             startFolder: this.#startFolder,
@@ -50,6 +53,18 @@ export class Scanner {
         let reason;
         try {
             await this.fsCrawler.start();
+            dlog('[Scanner.start()] #before for/async', this.queueLength());
+
+            const asyncFns = this.#actors.map( (actor) => actor.middleware );
+
+            for await (
+                const info of this.#filesQueue
+            ) {
+                await asyncConsistently( asyncFns, info.fullname );
+                dbgTemp(`[${this.queueLength()}] ${info.fullname}`);
+            }
+
+            dlog('[Scanner.start()] #end for/async', this.queueLength());
             reason = 'Completed successfull.';
         }
         catch (err) {
@@ -57,9 +72,14 @@ export class Scanner {
             reason = 'Error occured.';
         }
         finally {
+            dlog('[Scanner.start()] #finally', this.queueLength());
             // eslint-disable-next-line no-unsafe-finally
             return await this.createResults( reason );
         }
+    }
+
+    queueLength () {
+        return this.#filesQueue.values?.length;
     }
 
     useActor (actor) {
@@ -151,12 +171,18 @@ export class Scanner {
             //         });
             // }
 
-            const asyncFns = this.#actors.map( (actor) => actor.middleware );
-            asyncConsistently( asyncFns, info.fullname );
+            this.#filesQueue.enqueue( info );
+
+            // const asyncFns = this.#actors.map( (actor) => actor.middleware );
+            // asyncConsistently( asyncFns, info.fullname );
         });
 
         this.fsCrawler.addListener( FSCrawler.UNKNOWN_EVENT, (info) => {
             this.unknownList.push( info );
+        });
+
+        this.fsCrawler.addListener( FSCrawler.FINISH_EVENT, () => {
+            this.#filesQueue.enqueue( AsyncQueue.EOQ );
         });
     }
 }

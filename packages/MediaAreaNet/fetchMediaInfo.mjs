@@ -55,15 +55,15 @@ export default async function fetchMediaInfo (fullname, medianetLib) {
 
     const UR_EVENT_NAME = 'unhandledRejection';
     let filehandle;
-    let urls = [];
-    urls[0] = process.listenerCount( UR_EVENT_NAME );
+    let urListeners = [];
+    urListeners[0] = process.listenerCount( UR_EVENT_NAME );
     // let urListener;
     try {
-        urls[1] = process.listenerCount( UR_EVENT_NAME );
+        urListeners[1] = process.listenerCount( UR_EVENT_NAME );
         filehandle = await pfs.open( fullname, 'r');
         const stats = await filehandle.stat();
         dbgMain(`"${fullname}"`, stats );
-        urls[2] = process.listenerCount( UR_EVENT_NAME );
+        urListeners[2] = process.listenerCount( UR_EVENT_NAME );
 
         // urListener = process.rawListeners( UR_EVENT_NAME )?.at(-1);
 
@@ -88,7 +88,7 @@ export default async function fetchMediaInfo (fullname, medianetLib) {
         await filehandle?.close();
         //process.removeListener( UR_EVENT_NAME, urListener );
         dbgMain(`closed: ${fullname}`);
-        dbgTest(`MediaInfo.UR.listener's counts: ${urls}`);
+        dbgTest(`MediaInfo.UR.listener's counts: ${urListeners}`);
     }
 
     async function readChunk( size, offset ) {

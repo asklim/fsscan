@@ -106,7 +106,4 @@ class AsyncQueue {
     }
 }
 
-// A sentinel value returned by dequeue() to mark "end of stream" when closed
-//AsyncQueue.EOQ = Symbol('end-of-queue');
-
 export { AsyncQueue };

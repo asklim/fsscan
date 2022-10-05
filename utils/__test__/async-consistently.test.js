@@ -11,6 +11,7 @@ function fabric( add, delay ) {
     return (
         async (v) => {
             await pause( delay );
+            console.log( v, add );
             return v + add;
         }
     );

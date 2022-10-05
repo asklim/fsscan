@@ -6,7 +6,6 @@ export class CountingByExt extends AbstractActor {
 
     #sortByExt = 0;
     #sortByCount = 0;
-    #total = 0;
 
     constructor ({
         sortBy=undefined,
@@ -22,18 +21,15 @@ export class CountingByExt extends AbstractActor {
     keyName = () => 'filesByExt';
 
     middleware = async (fullname) => {
-        fullname = await fullname;
         if ( fullname == undefined ) {
             return;
         }
         let { ext } = path.parse( fullname );
         this.filesByExt[ ext ] ??= 0;
         this.filesByExt[ ext ] += 1;
-        this.#total += 1;
+        this.incrementTotal();
         return fullname;
     };
-
-    total = () => this.#total;
 
     results () {
         const sorted = Object.

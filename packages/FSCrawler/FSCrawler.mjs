@@ -13,6 +13,7 @@ export class FSCrawler extends EventEmitter {
     static FOLDER_EVENT = 'folderEntry';
     static FILE_EVENT = 'fileEntry';
     static UNKNOWN_EVENT = 'unknownEntry';
+    static FINISH_EVENT = 'finishEntry';
 
     #startFolder;
     #MAX_DEBUGLOG_LEVEL;
@@ -28,6 +29,7 @@ export class FSCrawler extends EventEmitter {
 
     async start () {
         await this.#recursiveScanFolder( this.#startFolder );
+        this.emit( FSCrawler.FINISH_EVENT );
     }
 
     async #recursiveScanFolder (dirName, level=0) {

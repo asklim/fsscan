@@ -1,6 +1,6 @@
 import createDebug from 'debug';
 //const dbgMain = createDebug('main');
-const dbgTest = createDebug('test');
+//const dbgTest = createDebug('test');
 const dbgTemp = createDebug('temp');
 
 import { AbstractActor } from './actor-Abstract.mjs';
@@ -12,8 +12,9 @@ import MediaInfo from 'mediainfo.js';
 export class MediaInfoTracks extends AbstractActor {
 
     #actorResults = [];
-    #medianetLib;
-
+    //#medianetLib;
+    #counter = 0;
+    #mwInvoked = 0;
     constructor () {
         super();
         //this.#medianetLib = medianetLib;
@@ -22,20 +23,26 @@ export class MediaInfoTracks extends AbstractActor {
     keyName = () => 'MediaInfo.Tracks';
 
     middleware = async (fullname) => {
-        fullname = await fullname;
+        //fullname = await fullname;
+        this.#mwInvoked++;
         if ( fullname == undefined ) {
             return;
         }
-
-        dbgTemp('MediaInfoTracks.middleware:', fullname );
+        this.#counter++;
+        dbgTemp(`MITracks.mw [${this.#counter}/${this.#mwInvoked}] ${fullname}`);
+        //dbgTemp('MediaInfoTracks.middleware:', fullname );
         const medianetLib = await MediaInfo({ full: true });
-
         let info = await fetchMediaInfo( fullname, medianetLib );
         const result = this.#extractOutputInfo( info );
-        dbgTest(`mediaInfoTracks.middleware`, result );
+
+        // dbgTemp(`mediaInfoTracks.middleware`, fullname == result.fullname, fullname );
 
         this.#actorResults.push( result );
         this.incrementTotal();
+        // dbgTemp(
+        //     `MITracks.mw after result ` +
+        //     `[${this.#counter}/${this.#mwInvoked}/${this.total()}]`
+        // );
 
         return fullname;
     };
@@ -49,7 +56,6 @@ export class MediaInfoTracks extends AbstractActor {
         let { fullname } = info;
         let general = info?.media?.track?.[0] ?? {};
         let md5 = hashMD5( fullname );
-
         return ({
             md5,
             fullname,

@@ -2,10 +2,10 @@ import { AsyncQueue } from "./AsyncQueue.mjs";
 
 let handler;
 
-function eventStream (elt, type) {
+function eventStream (element, type) {
     const q = new AsyncQueue(); // Create a queue
     handler = (e) => q.enqueue(e);
-    elt.addEventListener( type, handler ); // Enqueue events
+    element.addEventListener( type, handler ); // Enqueue events
     console.log('Listener added.');
     return q;
 }
