@@ -9,11 +9,11 @@ import EventEmitter from 'node:events';
 
 export class FSCrawler extends EventEmitter {
 
-    static ERROR_EVENT = 'errorEntry';
-    static FOLDER_EVENT = 'folderEntry';
-    static FILE_EVENT = 'fileEntry';
-    static UNKNOWN_EVENT = 'unknownEntry';
-    static FINISH_EVENT = 'finishEntry';
+    static ERROR_ENTRY    = Symbol('error-entry');
+    static FOLDER_ENTRY   = Symbol('folder-entry');
+    static FILE_ENTRY     = Symbol('file-entry');
+    static UNKNOWN_ENTRY  = Symbol('unknown-entry');
+    static END_OF_ENTRIES = Symbol('end-of-entries');
 
     #startFolder;
     #MAX_DEBUGLOG_LEVEL;
@@ -29,7 +29,7 @@ export class FSCrawler extends EventEmitter {
 
     async start () {
         await this.#recursiveScanFolder( this.#startFolder );
-        this.emit( FSCrawler.FINISH_EVENT );
+        this.emit( FSCrawler.END_OF_ENTRIES );
     }
 
     async #recursiveScanFolder (dirName, level=0) {
@@ -49,17 +49,17 @@ export class FSCrawler extends EventEmitter {
                 //dtmp('info', info );
                 if( info ) {
                     if( info.error ){
-                        this.emit( FSCrawler.ERROR_EVENT, info );
+                        this.emit( FSCrawler.ERROR_ENTRY, info );
                     }
                     else if( info.isDir ) {
                         directoryList.push( info.fullname );
-                        this.emit( FSCrawler.FOLDER_EVENT, info );
+                        this.emit( FSCrawler.FOLDER_ENTRY, info );
                     }
                     else if( info.isFile ){
-                        this.emit( FSCrawler.FILE_EVENT, info );
+                        this.emit( FSCrawler.FILE_ENTRY, info );
                     }
                     else {
-                        this.emit( FSCrawler.UNKNOWN_EVENT, info );
+                        this.emit( FSCrawler.UNKNOWN_ENTRY, info );
                     }
                 }
             }

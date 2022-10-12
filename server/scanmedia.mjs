@@ -1,7 +1,7 @@
 import createDebug from 'debug';
-//const dtmp = createDebug('temp');
 //const dlog = createDebug('log:scanMedia');
-const debug = createDebug('debug:scanMedia');
+//const debug = createDebug('temp');
+const dbgPerf = createDebug('perf:scanMedia');
 
 import process from 'node:process';
 import * as path from 'node:path';
@@ -20,29 +20,9 @@ const OK_EXIT_CODE = 0;
 const SIGINT_EXIT_CODE = 2 + 128;
 const START_FOLDER_NAME = path.resolve( process.argv[2] ?? './' );
 
-import { Scanner } from "../packages/Scanner/Scanner.mjs";
-const scanner = new Scanner( START_FOLDER_NAME );
+import scanner from "../packages/Scanner/default.mjs";
 
-import * as manet from '../packages/MediaAreaNet/index.mjs';
-//const audios = manet.audiosFormats();
-const videosFormats = manet.videosFormats();
 
-import { FilterByExt } from '../packages/Scanner/actor-FilterByExt.mjs';
-scanner.useActor( new FilterByExt( videosFormats ));
-
-import { MediaInfoTracks } from '../packages/Scanner/actor-MediaInfoTracks.mjs';
-scanner.useActor( new MediaInfoTracks());
-
-import { FinalCounter } from '../packages/Scanner/actor-FinalCounter.mjs';
-scanner.useActor( new FinalCounter());
-
-/*
-const specialsJS = [
-    '.coffee',
-    '.closure-compiler'
-];
-scanner.useActor( new FilterByExt( specialsJS ));
-*/
 process.on('unhandledRejection', (reason, promise) => {
     console.log('Unhandled Rejection at:', promise, 'reason:', reason);
     // Application specific logging, throwing an error, or other logic here
@@ -69,7 +49,7 @@ process.on( // For app termination
 
 await (async function scanMedia (){
     try{
-        const output = await scanner.start();
+        const output = await scanner.scanning( START_FOLDER_NAME );
 
         //console.log('Result is empty. Saving canceled.');
         await saveObjToFile({
@@ -83,7 +63,7 @@ await (async function scanMedia (){
     }
 })();
 
-debug( global.performance );
+dbgPerf( global.performance );
 console.log('end of script file.');
 console.log(`Process finished (pid:${process.pid}, exit code: ${exitCode}).`);
 process.exit( exitCode );

@@ -32,8 +32,7 @@ export class CountingByExt extends AbstractActor {
     };
 
     results () {
-        const sorted = Object.
-            entries( this.filesByExt ).
+        const sorted = Object.entries( this.filesByExt ).
             sort( compareEntryByKey );
         return Object.fromEntries( sorted );
     }

@@ -6,6 +6,7 @@
   "scripts": {
     "scan": "DEBUG=temp,log:*,-debug:* node --trace-warnings ./server/scanmedia.mjs",
     "video": "DEBUG=temp,log:*,-debug:* node ./server/scanmedia.mjs '/mnt/e/AKlim/Videos'",
+    "buffalo": "DEBUG=temp,log:*,-debug:* node ./server/scanmedia.mjs '/mnt/buffalo'",
     "media": "DEBUG=temp node --trace-warnings ./server/mediainfo.mjs '/mnt/e/AKlim/Videos'",
     "mp4": "node ./server/mp4info.mjs '/mnt/e/AKlim/Videos/'",
     "jest:utils": "jest -o utils/**/async*",

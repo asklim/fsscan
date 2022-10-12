@@ -5,14 +5,19 @@ import { AbstractActor } from './actor-Abstract.mjs';
 export class FilterByExt extends AbstractActor {
 
     #exts = [];
-    #filterByExt = [];
+    #actorResults = [];
+    #format;
 
-    constructor (filesExts) {
+    constructor ({
+        exts: filesExts,
+        reportFormat
+    }) {
         super();
         if ( !Array.isArray( filesExts )) {
             throw new Error('FilterByExt: argument is not a Array.');
         }
         this.#exts = this.#createExtListWithDots( filesExts );
+        this.#format = reportFormat;
     }
 
     keyName = () => 'filterByExt';
@@ -28,13 +33,18 @@ export class FilterByExt extends AbstractActor {
             return;
         }
 
-        this.#filterByExt.push( fullname );
+        this.#actorResults.push( fullname );
         this.incrementTotal();
         return fullname;
     };
 
     results () {
-        return [ ...this.#filterByExt ];
+        return this.#format == 'exts' ?
+            countingByExt( this.#actorResults )
+            : {
+                results: [ ...this.#actorResults ]
+            }
+        ;
     }
 
     #createExtListWithDots (exts) {
@@ -53,3 +63,25 @@ export class FilterByExt extends AbstractActor {
     }
 }
 
+
+function countingByExt( fileslist ) {
+
+    const filesByExt = {};
+
+    for ( let fname of fileslist ) {
+        let { ext } = path.parse( fname );
+        filesByExt[ ext ] ??= 0;
+        filesByExt[ ext ] += 1;
+    }
+
+    const sorted = Object.entries( filesByExt ).
+        sort( compareEntryByKey );
+    return Object.fromEntries( sorted );
+
+
+    function compareEntryByKey (a, b) {
+        if ( a[0] > b[0] ) { return 1; }
+        if ( a[0] < b[0] ) { return -1; }
+        return 0;
+    }
+}
