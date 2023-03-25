@@ -20,8 +20,8 @@ const OK_EXIT_CODE = 0;
 const SIGINT_EXIT_CODE = 2 + 128;
 const START_FOLDER_NAME = path.resolve( process.argv[2] ?? './' );
 
-import scanner from "../packages/Scanner/default.mjs";
-
+import { createDefault } from "../packages/Scanner/createDefault.mjs";
+const scanner = createDefault();
 
 process.on('unhandledRejection', (reason, promise) => {
     console.log('Unhandled Rejection at:', promise, 'reason:', reason);

@@ -22,7 +22,7 @@ export class Scanner {
 
         this.timeStart = new Date;
         this.summary = {
-            startFolder: this.#startFolder,
+            startFolder: '',
             status: '',
             momentStart: this.timeStart.toUTCString(),
             momentStop: '',
@@ -48,6 +48,7 @@ export class Scanner {
 
     async scanning (startFolder) {
         this.#startFolder = startFolder;
+        this.summary.startFolder = startFolder;
         this.#initCrawler();
 
         let reason;

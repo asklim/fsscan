@@ -1,4 +1,4 @@
-import { AsyncQueue } from "./AsyncQueue.mjs";
+import { AsyncQueue } from "../AsyncQueue.mjs";
 
 let handler;
 
